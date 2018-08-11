@@ -18,6 +18,7 @@ const rimraf = require('rimraf');
 const join = require('path').join;
 const fs = require('fs');
 const exec = require( 'child_process' ).exec;
+const tar = require('tar');
 //console utils
 const argv = require('minimist')(process.argv.slice(2));
 const chalk = require('chalk');
@@ -191,6 +192,25 @@ function createBundle(bundleType){
     };
 }
 
+function createGzip() {
+  return (resolve, reject) => {
+    tar.create(
+      {
+        file: 'build.tar.gz',
+        gzip: true,
+      },
+      [ 'build' ],
+      (err) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve();
+        }
+      },
+    );
+  };
+};
+
 //clean directory
 rimraf('build', ()=>{
   // create a new build directory
@@ -208,7 +228,8 @@ rimraf('build', ()=>{
     createTask('Making IIFE Dev Bundles', createBundle(Bundles.IIFE_DEV)),
     createTask('Making IIFE Production Bundles', createBundle(Bundles.IIFE_PROD)),
     createTask('Making Demo Build', createWebpackBuild(webpackConfig) ),
-    createTask('Making Docs Build', createWebpackBuild(webpackDocConfig) )
+    createTask('Making Docs Build', createWebpackBuild(webpackDocConfig) ),
+    createTask('Zip everything', createGzip()),
   );
 
   // run tasks

@@ -10,3 +10,5 @@ pendingtest
 .nyc_output
 dist
 build
+
+.*.swp
