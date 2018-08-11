@@ -13,19 +13,33 @@ export default class Grids extends Component {
          * Automatic grids, contain Array of Objects for grid, Optional `icon` and `label` property for each object
          *
          */
-        data: PropTypes.array
+        data: PropTypes.array,
+        onClickIndex: PropTypes.func,
     };
 
     static defaultProps = {
-      data: []
+      data: [],
     };
+
+    constructor(props) {
+      super(props);
+      this.handleClickIndex = this.handleClickIndex.bind(this);
+    }
+
+    handleClickIndex(index) {
+      if (this.props.onClickIndex) {
+        this.props.onClickIndex(index);
+      }
+    }
 
     renderData(data) {
         return data.map((item, i) => {
             return <Grid
                     key={i}
+                    clickParam={i}
                     icon={item.icon}
                     label={item.label}
+                    onClickIndex={this.handleClickIndex}
                     {...item}
                     />;
         });
@@ -33,7 +47,7 @@ export default class Grids extends Component {
 
     render() {
 
-        const {children, data, className, ...others} = this.props;
+        const {children, data, className, onClickIndex, ...others} = this.props;
         const cls = classNames({
             'weui-grids': true
         }, className);

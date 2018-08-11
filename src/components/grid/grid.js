@@ -23,7 +23,8 @@ export default class Grid extends React.Component {
       /**
        * pass in an component to replace Grid but apply same style
        */
-      component: PropTypes.func
+      component: PropTypes.func,
+      onClickIndex: PropTypes.func,
     };
 
     static defaultProps = {
@@ -31,8 +32,22 @@ export default class Grid extends React.Component {
       icon: false
     };
 
+    constructor(props) {
+      super(props);
+      this.handleClickIndex = this.handleClickIndex.bind(this);
+    }
+
+    handleClickIndex(event) {
+      if (this.props.onClick) {
+        this.props.onClick(event);
+      }
+      if (this.props.onClickIndex) {
+        this.props.onClickIndex(this.props.clickParam);
+      }
+    }
+
     render() {
-        const {children, icon, label, className, component, ...others} = this.props;
+        const {children, clickParam, icon, label, className, component, onClickIndex, onClick, ...others} = this.props;
         const cls = classNames({
             'weui-grid': true
         }, className);
@@ -40,7 +55,11 @@ export default class Grid extends React.Component {
         var GridComponent = component ? component : DefaultComponent;
 
         return (
-            <GridComponent className={cls} {...others}>
+            <GridComponent
+              className={cls}
+              onClick={this.handleClickIndex}
+              {...others}
+            >
               {icon ? <GridIcon>{icon}</GridIcon> : false}
               {children}
               {label ? <GridLabel>{label}</GridLabel> : false}
