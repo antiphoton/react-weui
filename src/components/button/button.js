@@ -9,6 +9,7 @@ import classNames from '../../utils/classnames';
 export default class Button extends React.Component {
     static propTypes = {
         disabled: PropTypes.bool,
+        loading: PropTypes.bool,
         /**
          * Options: primary, default, warn, vcode
          *
@@ -23,12 +24,13 @@ export default class Button extends React.Component {
 
     static defaultProps = {
         disabled: false,
+        loading: false,
         type: 'primary',
         size: 'normal',
     };
 
     render() {
-        const { component, type, size, plain, className, children, ...others } = this.props;
+        const { component, loading, type, size, plain, className, children, ...others } = this.props;
         const Component = component ? component : this.props.href || type === 'vcode' ? 'a' : 'button';
         const cls = type === 'vcode' ? classNames('weui-vcode-btn', {[className]: className}) : classNames({
             'weui-btn': true,
@@ -40,11 +42,17 @@ export default class Button extends React.Component {
             'weui-btn_plain-default': type === 'default' && plain,
             'weui-btn_disabled': this.props.disabled && !plain,
             'weui-btn_plain-disabled': this.props.disabled && plain,
+            'weui-btn_loading': loading,
             [className]: className
         });
 
         return (
-            <Component { ...others } className={ cls }>{ children }</Component>
+            <Component { ...others } className={ cls }>
+                {loading && (
+                    <i className="weui-loading" />
+                )}
+                { children }
+            </Component>
         );
     }
 };
